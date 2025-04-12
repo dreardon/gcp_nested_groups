@@ -59,11 +59,10 @@ def index(cloud_event):
         requesting_ip = message['protoPayload']['requestMetadata'].get('callerIp', '')
         membership_id = message['protoPayload']['metadata']['event'][0]['parameter'][0]['value']
 
-        okta_ip_ranges = gather_okta_ip_ranges()
-        if not okta_ip_ranges:
-            return ("Could not retrieve Okta IP ranges", 500)
-
         if OKTA_GROUPS_ONLY == 'True':
+            okta_ip_ranges = gather_okta_ip_ranges()
+            if not okta_ip_ranges:
+                return ("Could not retrieve Okta IP ranges", 500)            
             if requesting_ip:
                 if is_okta_ip(requesting_ip, okta_ip_ranges):
                     add_subgroup(membership_id)
